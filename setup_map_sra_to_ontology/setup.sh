@@ -8,24 +8,33 @@
 # Example:
 #   export PYTHONPATH=<path to directory containing bktree.py script>:$PYTHONPATH
 
-# Download ontologies
-echo "Downloading ontologies..."
-python download_ontologies.py
+DOWNLOAD=0
+BUILD_BKTREE=0
 
-# Reformat Cellosaurus
-echo "Reformating Cellosaurus..."
-python reformat_cellosaurus.py
+if [ $DOWNLOAD == 1 ]
+then
+    # Download ontologies
+    echo "Downloading ontologies..."
+    python download_ontologies.py
 
-# Download SPECIALIST Lexicon
-echo "Downloading SPECIALIST Lexicon..."
-python download_specialist_lexicon.py 
+    # Reformat Cellosaurus
+    echo "Reformating Cellosaurus..."
+    python reformat_cellosaurus.py
 
-# Build BK-tree for fuzzy string matching
-echo "Building the BK-tree from the ontologies..."
-mkdir ../map_sra_to_ontology/fuzzy_matching_index
-python build_bk_tree.py
-mv fuzzy_match_bk_tree.pickle ../map_sra_to_ontology/fuzzy_matching_index 
-mv fuzzy_match_string_data.json ../map_sra_to_ontology/fuzzy_matching_index
+    # Download SPECIALIST Lexicon
+    echo "Downloading SPECIALIST Lexicon..."
+    python download_specialist_lexicon.py 
+fi
+
+if [ $BUILD_BKTREE == 1 ]
+then
+    # Build BK-tree for fuzzy string matching
+    echo "Building the BK-tree from the ontologies..."
+    mkdir ../map_sra_to_ontology/fuzzy_matching_index
+    python build_bk_tree.py
+    mv fuzzy_match_bk_tree.pickle ../map_sra_to_ontology/fuzzy_matching_index 
+    mv fuzzy_match_string_data.json ../map_sra_to_ontology/fuzzy_matching_index
+fi
 
 # Link the terms between ontologies 
 echo "Linking ontologies..."

@@ -22,15 +22,24 @@ from map_sra_to_ontology import predict_sample_type
 from map_sra_to_ontology import config
 from map_sra_to_ontology import predict_sample_type
 from map_sra_to_ontology import run_sample_type_predictor
-from predict_sample_type.learn_classifier import *
+#from predict_sample_type.learn_classifier import *
 from map_sra_to_ontology import pipeline_components as pc
 
 def main():
     parser = OptionParser()
-    #parser.add_option("-f", "--key_value_file", help="JSON file storing key-value pairs describing sample")
+    parser.add_option("-i", "--key_value_vile", dest="input",
+        help="JSON file storing key-value pairs describing sample")
+    parser.add_option("-m", "--mapped_terms_file", dest="mapped_terms",
+        help="Ouptut JSON file of mapped terms")
+    parser.add_option("-o", "--output", dest="output",
+        help="Output file")
     (options, args) = parser.parse_args()
-   
-    input_f = args[0]
+
+    if len(args) >= 1:
+        input_f = args[0]
+    
+    if options.input:
+        input_f = options.input
      
     # Map key-value pairs to ontologies
     with open(input_f, "r") as f:
@@ -47,6 +56,7 @@ def main():
     pipeline = p_48()
 
     all_mappings = []
+    all_mappings_out = []
     for tag_to_val in tag_to_vals:
         sample_acc_to_matches = {}
         mapped_terms, real_props = pipeline.run(tag_to_val)
@@ -56,12 +66,28 @@ def main():
         }
         all_mappings.append(mappings)
 
+        if options.mapped_terms:
+            all_mappings_out.append({
+                "attributes": tag_to_val,
+                "mapped_terms": mappings["mapped_terms"],
+                "real_value_properties": mappings["real_value_properties"]
+            })
+
+    if options.mapped_terms:
+        with open(options.mapped_terms, "w") as f:
+            json.dump(all_mappings_out, f, indent=4, separators=(',', ': '))
+
     outputs = []
     for tag_to_val, mappings in zip(tag_to_vals, all_mappings):
         outputs.append(
             run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings)
         )
-    print json.dumps(outputs, indent=4, separators=(',', ': '))
+    
+    if options.output:
+        with open(options.output, "w") as f:
+            json.dump(outputs, f, indent=4, separators=(',', ': '))
+    else:
+        print json.dumps(outputs, indent=4, separators=(',', ': '))
 
 def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data): 
     
