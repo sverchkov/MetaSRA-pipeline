@@ -24,6 +24,7 @@ from map_sra_to_ontology import predict_sample_type
 from map_sra_to_ontology import run_sample_type_predictor
 #from predict_sample_type.learn_classifier import *
 from map_sra_to_ontology import pipeline_components as pc
+from all_pipelines.pipeline_v53 import build_pipeline
 
 def main():
     parser = OptionParser()
@@ -53,25 +54,27 @@ def main():
         "EFO":"16",
         "CVCL":"4"}
     ont_id_to_og = {x:load_ontology.load(x)[0] for x in ont_name_to_ont_id.values()}
-    pipeline = p_48()
+    pipeline = build_pipeline()
 
     all_mappings = []
     all_mappings_out = []
     for tag_to_val in tag_to_vals:
-        sample_acc_to_matches = {}
-        mapped_terms, real_props = pipeline.run(tag_to_val)
-        mappings = {
-            "mapped_terms":[x.to_dict() for x in mapped_terms],
-            "real_value_properties": [x.to_dict() for x in real_props]
-        }
-        all_mappings.append(mappings)
+        try:
+            mapped_terms, real_props = pipeline.run(tag_to_val)
+            mappings = {
+                "mapped_terms":[x.to_dict() for x in mapped_terms],
+                "real_value_properties": [x.to_dict() for x in real_props]
+            }
+            all_mappings.append(mappings)
 
-        if options.mapped_terms:
-            all_mappings_out.append({
-                "attributes": tag_to_val,
-                "mapped_terms": mappings["mapped_terms"],
-                "real_value_properties": mappings["real_value_properties"]
-            })
+            if options.mapped_terms:
+                all_mappings_out.append({
+                    "attributes": tag_to_val,
+                    "mapped_terms": mappings["mapped_terms"],
+                    "real_value_properties": mappings["real_value_properties"]
+                })
+        except Exception as e:
+            sys.stderr.write(str(e) + '\n')       
 
     if options.mapped_terms:
         with open(options.mapped_terms, "w") as f:
