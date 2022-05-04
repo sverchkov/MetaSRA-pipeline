@@ -1,0 +1,13 @@
+name: metasra
+channels:
+  - conda-forge
+dependencies:
+  - python=2
+  - numpy
+  - scipy
+  - scikit-learn
+  - setuptools
+  - pip
+  - pip:
+    - git+https://github.com/pytries/marisa-trie@0.7.7
+  
