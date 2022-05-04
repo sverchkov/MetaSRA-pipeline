@@ -11,18 +11,20 @@ from sets import Set
 import sys
 from collections import defaultdict, deque
 import json
-import dill
+#import dill
 import os
 from os.path import join
+
+sys.path.append('bktree')
 
 import map_sra_to_ontology
 from map_sra_to_ontology import ontology_graph
 from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import config
-import predict_sample_type
-from predict_sample_type import run_sample_type_predictor
-from predict_sample_type.learn_classifier import *
-from map_sra_to_ontology import pipeline_components as pc
+
+from map_sra_to_ontology import run_sample_type_predictor
+from map_sra_to_ontology.predict_sample_type.learn_classifier import *
+from map_sra_to_ontology.pipeline_components import *
 
 def main():
     parser = OptionParser()
@@ -55,6 +57,8 @@ def main():
         }
         all_mappings.append(mappings)
 
+    print json.dumps(all_mappings, indent=4, separators=(',', ': '))
+
     outputs = []
     for tag_to_val, mappings in zip(tag_to_vals, all_mappings):
         outputs.append(
@@ -62,7 +66,7 @@ def main():
         )
     print json.dumps(outputs, indent=4, separators=(',', ': '))
 
-def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data): 
+def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, run_prediction=False): 
     
     mapped_terms = []
     real_val_props = []
@@ -87,17 +91,20 @@ def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data):
             sup_terms.update(og.recursive_relationship(term_id, ['is_a', 'part_of']))
     mapped_terms = list(sup_terms)
 
-    predicted, confidence = run_sample_type_predictor.run_sample_type_prediction(
-        tag_to_val, 
-        mapped_terms, 
-        real_val_props
-    )
-
     mapping_data = {
         "mapped ontology terms": mapped_terms, 
-        "real-value properties": real_val_props, 
-        "sample type": predicted, 
-        "sample-type confidence": confidence}
+        "real-value properties": real_val_props
+    }
+
+    if run_prediction:
+        predicted, confidence = run_sample_type_predictor.run_sample_type_prediction(
+            tag_to_val, 
+            mapped_terms, 
+            real_val_props
+        )
+
+        mapping_data["sample type"] = predicted 
+        mapping_data["sample-type confidence"] = confidence
 
     return mapping_data
     #print json.dumps(mapping_data, indent=4, separators=(',', ': '))
