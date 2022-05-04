@@ -28,7 +28,7 @@ from all_pipelines.pipeline_v53 import build_pipeline
 
 def main():
     parser = OptionParser()
-    parser.add_option("-i", "--key_value_vile", dest="input",
+    parser.add_option("-i", "--key_value_file", dest="input",
         help="JSON file storing key-value pairs describing sample")
     parser.add_option("-m", "--mapped_terms_file", dest="mapped_terms",
         help="Ouptut JSON file of mapped terms")

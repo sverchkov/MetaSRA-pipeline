@@ -8,8 +8,8 @@
 # Example:
 #   export PYTHONPATH=<path to directory containing bktree.py script>:$PYTHONPATH
 
-DOWNLOAD=0
-BUILD_BKTREE=0
+DOWNLOAD=1
+BUILD_BKTREE=1
 
 if [ $DOWNLOAD == 1 ]
 then
