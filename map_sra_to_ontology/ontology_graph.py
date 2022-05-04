@@ -457,10 +457,10 @@ def parse_entity(lines, restrict_to_idspaces):
         """
         synonyms = Set()
         for syn in raw_syns:
-            m = re.search('\".+\"', syn)
+            m = re.search('\"(.+)\"(.+)$', syn)
             if m:
-                syn_type = syn.split('"')[2].strip().split()[0]
-                parsed_syn = m.group(0)[1:-1].strip()
+                syn_type = m.group(2).strip().split()[0]
+                parsed_syn = m.group(1).strip()
                 synonyms.add(Synonym(parsed_syn, syn_type))
         return synonyms
 
