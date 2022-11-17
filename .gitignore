@@ -1,0 +1,13 @@
+# Downloaded and generated files
+map_sra_to_ontology/ont_prefix_to_filename.json
+map_sra_to_ontology/LEX/*
+!map_sra_to_ontology/LEX/README
+map_sra_to_ontology/metadata/cellline_to_disease_implied_terms.json
+map_sra_to_ontology/obo/*.obo
+map_sra_to_ontology/fuzzy_matching_index
+
+setup_map_sra_to_ontology/term_to_linked_terms.json
+setup_map_sra_to_ontology/term_to_superterm_linked_terms.json
+
+# Python things
+*.pyc
