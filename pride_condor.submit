@@ -1,0 +1,16 @@
+# Condor submit file for PRIDE set
+
+# Prerequisites: assume PRIDE samples are available in PRIDE/INPUT/{sample_id}.json format
+
+executable = /ua/yuriy/miniconda3/envs/metasra/bin/python
+arguments = run_on_sample.py $(IN_FILE) PRIDE/OUTPUT/$Fnx(IN_FILE)
+
+output = PRIDE/LOG/$Fn(IN_FILE).out
+error = PRIDE/LOG/$Fn(IN_FILE).err
+log = PRIDE/LOG/$Fn(IN_FILE).log
+
+request_memory = 4GB
+request_cpus = 1
+request_disk = 1GB
+
+queue IN_FILE matching (PRIDE/INPUT/*.json)

@@ -9,5 +9,9 @@ map_sra_to_ontology/fuzzy_matching_index
 setup_map_sra_to_ontology/term_to_linked_terms.json
 setup_map_sra_to_ontology/term_to_superterm_linked_terms.json
 
+# Input and output files
+PRIDE
+SRA_TEST_SET
+
 # Python things
 *.pyc
