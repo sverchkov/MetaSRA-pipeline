@@ -1,0 +1,20 @@
+# Condor submit file for our SRA held-out test set
+#
+# Run from the project folder using condor_submit sra_test_set_condor.submit
+#
+# Prerequisites:
+#   samples are available in SRA_TEST_SET/INPUT/{sample_id}.json
+#   SRA_TEST_SET/LOG and SRA_TEST_SET/OUTPUT exist
+
+executable = /ua/yuriy/miniconda3/envs/metasra/bin/python
+arguments = run_on_sample.py $(IN_FILE) SRA_TEST_SET/OUTPUT/$Fnx(IN_FILE)
+
+output = SRA_TEST_SET/LOG/$Fn(IN_FILE).out
+error = SRA_TEST_SET/LOG/$Fn(IN_FILE).err
+log = SRA_TEST_SET/LOG/$Fn(IN_FILE).log
+
+request_memory = 4GB
+request_cpus = 1
+request_disk = 1GB
+
+queue IN_FILE matching (SRA_TEST_SET/INPUT/*.json)
