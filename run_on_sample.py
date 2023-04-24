@@ -20,6 +20,11 @@ if __name__ == "__main__":
     # Load input
     with open(in_json, 'r') as instream:
         in_dict = json.load(instream)
+
+    # Encode as ascii characters
+    in_dict = {
+        key.encode('ascii', 'replace'): val.encode('ascii', 'replace') for key, val in in_dict.iteritems()
+    }
     
     # Build pipeline
     pipeline = pipeline_v53.build_pipeline()

@@ -36,6 +36,16 @@ def main():
     # Map key-value pairs to ontologies
     with open(input_f, "r") as f:
         tag_to_vals = json.load(f)
+    
+    # Non-ascii chars break things
+    tag_to_vals = [
+        {
+            key.encode('ascii', 'ignore'): val.encode('ascii', 'ignore')
+            for key, val in tag_to_val.iteritems()
+        }
+        for tag_to_val in tag_to_vals
+    ]
+    print 'cleared non-ascii characters'
 
     # Load ontologies
     ont_name_to_ont_id = {
