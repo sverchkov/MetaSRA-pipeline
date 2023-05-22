@@ -688,6 +688,44 @@ class Delimit_Stage:
         return text_mining_graph
 
 
+class DelimitRE_Stage:
+    """
+    Delimits each artifact by a given regex and sequence
+    of delimited substrings are used to generate new
+    set of artifacts.
+    """
+
+    def __init__(self, pattern):
+        self.pattern = pattern
+
+    def run(self, text_mining_graph):
+        print "Delimiting artifacts on regular expression '%s'..." % self.pattern
+        node_to_next_nodes = defaultdict(list)
+        for t_node in text_mining_graph.token_nodes:
+            split_result = re.split(f'({self.pattern})', str(t_node.token_str))
+            if len(split_result) < 3:
+                continue
+            split_t_strs = split_result[0::2]
+            split_t_delims = split_result[1::2]
+
+            curr_interval_begin = t_node.origin_gram_start
+            edge_str = 'Delim'
+            for i, split_t_str in enumerate(split_t_strs):
+                new_t_node = TokenNode(split_t_str, curr_interval_begin, curr_interval_begin + len(split_t_str))
+                if i < len(split_t_delims):
+                    curr_interval_begin += len(split_t_delims[i])
+                    edge_str = f'Delim {split_t_delims[i]}'
+                edge = DerivesInto(edge_str)
+                node_to_next_nodes[t_node].append((edge, new_t_node))
+                curr_interval_begin += len(split_t_str)
+                
+        for s_node, next_nodes in node_to_next_nodes.items():
+            for edge, t_node in next_nodes:
+                text_mining_graph.add_edge(s_node, t_node, edge)
+
+        return text_mining_graph
+
+
 class FilterOntologyMatchesByPriority_Stage:
     """
     If an artifact has an exact string match with multiple ontology
@@ -1156,6 +1194,70 @@ class AcronymToExpansion_Stage:
             for e in new_edges:
                 text_mining_graph.add_edge(node, e[0], e[1])
 
+        return text_mining_graph
+
+
+class CamelCut_Stage:
+    """
+    Cut up CamelCase words
+    """
+
+    def __init__(self):
+        pass
+    
+    def run(self, text_mining_graph):
+
+        print "Cutting CamelCase words"
+        edge = Inference("CamelCut")
+
+        new_edges = []
+
+        for t_node in text_mining_graph.token_nodes:
+            for word, (start, end) in zip(*get_ngrams(t_node.token_str, 1)):
+                if not any(c.islower() for c in word) and not any(c.isupper() for c in word):
+                    continue
+                new_token = ""
+                new_idxs = []
+                for c, i in zip(word, t_node.char_indices[start:end]):
+                    if new_token and (
+                        (c.isupper() and not new_token[-1].isupper()) or
+                        (c.isnumeric() and not new_token[-1].isnumeric())
+                    ):
+                        new_token += " "
+                        new_idxs.append(i)
+                    new_token += c
+                    new_idxs.append(i)
+
+                new_edges.append((
+                    t_node,
+                    TokenNode(new_token, char_indices=new_idxs),
+                    edge
+                ))
+
+        # Adding this loop because the graph cannot be modified during iteration
+        for node, new_node, new_edge in new_edges:
+            text_mining_graph.add_edge(node, new_node, new_edge)
+
+        return text_mining_graph
+
+
+class StopWord_Stage:
+    """
+    Remove tokens that are stopwords
+    """
+
+    def __init__(self, language='english'):
+        self.stopwords = set(nltk.corpus.stopwords.words(language))
+        # Add capitalized versions
+        self.stopwords |= set(word[0].upper() + word[1:] for word in self.stopwords)
+
+    def run(self, text_mining_graph):
+
+        print 'Cleaning up stopwords'
+        delete_list = [t_node for t_node in text_mining_graph.token_nodes if t_node.token_str in self.stopwords]
+        for t_node in delete_list:
+            text_mining_graph.delete_node(t_node)
+        
         return text_mining_graph
 
 
