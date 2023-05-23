@@ -96,13 +96,13 @@ class AlnumWeightedEditDistance(Callable):
 
     __name__ = 'AlnumWeightedEditDistance'
 
-    def __init__(self, non_alnum_weight: float) -> None:
-        self.non_alnum_weight: float = non_alnum_weight
+    def __init__(self, non_alnum_weight):
+        self.non_alnum_weight = non_alnum_weight
     
-    def __call__(self, str_a: str, str_b: str) -> float:
+    def __call__(self, str_a, str_b):
         return weighted_edit_dist(str_a, str_b, self._weight_fn)
 
-    def _weight_fn(self, char: str):
+    def _weight_fn(self, char):
         return 1 if char.isalnum() else self.non_alnum_weight
 
 
@@ -110,13 +110,13 @@ class AlnumWeightedBagDistance(Callable):
 
     __name__ = 'AlnumWeightedBagDistance'
 
-    def __init__(self, non_alnum_weight: float) -> None:
-        self.non_alnum_weight: float = non_alnum_weight
+    def __init__(self, non_alnum_weight):
+        self.non_alnum_weight = non_alnum_weight
     
-    def __call__(self, str_a: str, str_b: str) -> float:
+    def __call__(self, str_a, str_b):
         return weighted_bag_dist_multiset(str_a, str_b, self._weight_fn)
     
-    def _weight_fn(self, char: str):
+    def _weight_fn(self, char):
         return 1 if char.isalnum() else self.non_alnum_weight
 
 
@@ -124,16 +124,16 @@ class CasePermissiveAlnumWeightedEditDistance(Callable):
 
     __name__ = 'CasePermissiveAlnumWeightedEditDistance'
 
-    def __init__(self, non_alnum_weight: float, case_weight: float) -> None:
-        self.non_alnum_weight: float = non_alnum_weight
-        self.case_weight: float = case_weight
+    def __init__(self, non_alnum_weight, case_weight):
+        self.non_alnum_weight = non_alnum_weight
+        self.case_weight = case_weight
     
-    def __call__(self, str_a: str, str_b: str) -> float:
+    def __call__(self, str_a, str_b):
         return min(
             weighted_edit_dist(str_a, str_b, self._weight_fn),
             weighted_edit_dist(str_a.lower(), str_b.lower(), self._weight_fn) + self.case_weight)
 
-    def _weight_fn(self, char: str):
+    def _weight_fn(self, char):
         return 1 if char.isalnum() else self.non_alnum_weight
 
 
@@ -141,14 +141,14 @@ class CasePermissiveAlnumWeightedBagDistance(Callable):
 
     __name__ = 'CasePermissiveAlnumWeightedBagDistance'
 
-    def __init__(self, non_alnum_weight: float, case_weight: float) -> None:
-        self.non_alnum_weight: float = non_alnum_weight
-        self.case_weight: float = case_weight
+    def __init__(self, non_alnum_weight, case_weight):
+        self.non_alnum_weight = non_alnum_weight
+        self.case_weight = case_weight
     
-    def __call__(self, str_a: str, str_b: str) -> float:
+    def __call__(self, str_a, str_b):
         return min(
             weighted_bag_dist_multiset(str_a, str_b, self._weight_fn),
             weighted_bag_dist_multiset(str_a.lower(), str_b.lower(), self._weight_fn) + self.case_weight)
     
-    def _weight_fn(self, char: str):
+    def _weight_fn(self, char):
         return 1 if char.isalnum() else self.non_alnum_weight
