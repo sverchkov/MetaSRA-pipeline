@@ -23,6 +23,8 @@ from text_reasoning_graph import *
 import ball_tree_distance
 from load_specialist_lex import SpecialistLexicon
 
+import string_metrics
+
 import bktree
 from bktree import BKTree
 import marisa_trie as mt
@@ -892,23 +894,25 @@ class FuzzyStringMatching_Stage:
     """
     def __init__(self, thresh, query_len_thresh=None, match_numeric=False, distance=None):
 
-        if distance is None:
-        
-            fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_string_data.json"))
-            with open(fname, "r") as f:
-                self.str_to_terms = json.load(f)
+        if distance is '2023':
+            self.edit_distance = string_metrics.CasePermissiveAlnumWeightedEditDistance(0.2, 0.2)
 
+            fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_bk_tree_2023.pickle"))
+            with open(fname, "r") as f:
+                self.bk_tree = pickle.load(f)
+        
+        else:
+        
             fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_bk_tree.pickle"))
             with open(fname, "r") as f:
                 self.bk_tree = pickle.load(f)
             
             self.edit_distance = edit_distance
-        
-        else:
-            self.str_to_terms = distance.str_to_terms
-            self.bk_tree = distance.bk_tree
-            self.edit_distance = distance.function
-        
+                
+        fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_string_data.json"))
+        with open(fname, "r") as f:
+            self.str_to_terms = json.load(f)
+
         self.query_len_thresh = query_len_thresh
         self.thresh = thresh
         self.match_numeric = match_numeric

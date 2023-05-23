@@ -30,15 +30,20 @@ def main():
                 str_to_terms[syn.syn_str].append([term.id, "SYNONYM_%s" % syn.syn_type])
                 string_identifiers.add(syn.syn_str)
 
-    print "Building the BK-Tree..."
+    with open("fuzzy_match_string_data.json", "w") as f:
+        f.write(json.dumps(str_to_terms, indent=4, separators=(',', ': ')))
+
+    print "Building the standard edit distance BK-Tree..."
     bk_tree = BKTree(string_metrics.bag_dist_multiset, string_identifiers)
 
     with open("fuzzy_match_bk_tree.pickle", "w") as f:
         pickle.dump(bk_tree, f)
 
-    with open("fuzzy_match_string_data.json", "w") as f:
-        f.write(json.dumps(str_to_terms, indent=4, separators=(',', ': ')))
+    print "Building the custom edit distance BK-Tree..."
+    bk_tree_2 = BKTree(string_metrics.CasePermissiveAlnumWeightedBagDistance(0.2,0.2), string_identifiers)
 
+    with open("fuzzy_match_bk_tree_2023.pickle", "w") as f:
+        pickle.dump(bk_tree_2, f)
 
 if __name__ == "__main__":
     main() 
