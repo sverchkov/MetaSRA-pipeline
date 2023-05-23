@@ -890,15 +890,24 @@ class FuzzyStringMatching_Stage:
     Use a pre-constructed BK-tree to perform fuzzy matching
     for all artifacts against the ontologies.
     """
-    def __init__(self, thresh, query_len_thresh=None, match_numeric=False):
-       
-        fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_string_data.json"))
-        with open(fname, "r") as f:
-            self.str_to_terms = json.load(f)
+    def __init__(self, thresh, query_len_thresh=None, match_numeric=False, distance=None):
 
-        fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_bk_tree.pickle"))
-        with open(fname, "r") as f:
-            self.bk_tree = pickle.load(f)
+        if distance is None:
+        
+            fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_string_data.json"))
+            with open(fname, "r") as f:
+                self.str_to_terms = json.load(f)
+
+            fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_bk_tree.pickle"))
+            with open(fname, "r") as f:
+                self.bk_tree = pickle.load(f)
+            
+            self.edit_distance = edit_distance
+        
+        else:
+            self.str_to_terms = distance.str_to_terms
+            self.bk_tree = distance.bk_tree
+            self.edit_distance = distance.function
         
         self.query_len_thresh = query_len_thresh
         self.thresh = thresh
@@ -1217,20 +1226,17 @@ class CamelCut_Stage:
                 if not any(c.islower() for c in word) and not any(c.isupper() for c in word):
                     continue
                 new_token = ""
-                new_idxs = []
-                for c, i in zip(word, t_node.char_indices[start:end]):
+                for c in word:
                     if new_token and (
                         (c.isupper() and not new_token[-1].isupper()) or
                         (c.isnumeric() and not new_token[-1].isnumeric())
                     ):
                         new_token += " "
-                        new_idxs.append(i)
                     new_token += c
-                    new_idxs.append(i)
-
+                    
                 new_edges.append((
                     t_node,
-                    TokenNode(new_token, char_indices=new_idxs),
+                    TokenNode(new_token, t_node.origin_gram_start, t_node.origin_gram_end),
                     edge
                 ))
 
