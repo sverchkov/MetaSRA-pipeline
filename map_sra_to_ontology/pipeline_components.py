@@ -704,7 +704,7 @@ class DelimitRE_Stage:
         print "Delimiting artifacts on regular expression '%s'..." % self.pattern
         node_to_next_nodes = defaultdict(list)
         for t_node in text_mining_graph.token_nodes:
-            split_result = re.split(f'({self.pattern})', str(t_node.token_str))
+            split_result = re.split('(' + self.pattern + ')', str(t_node.token_str))
             if len(split_result) < 3:
                 continue
             split_t_strs = split_result[0::2]
@@ -716,7 +716,7 @@ class DelimitRE_Stage:
                 new_t_node = TokenNode(split_t_str, curr_interval_begin, curr_interval_begin + len(split_t_str))
                 if i < len(split_t_delims):
                     curr_interval_begin += len(split_t_delims[i])
-                    edge_str = f'Delim {split_t_delims[i]}'
+                    edge_str = 'Delim ' + split_t_delims[i]
                 edge = DerivesInto(edge_str)
                 node_to_next_nodes[t_node].append((edge, new_t_node))
                 curr_interval_begin += len(split_t_str)
@@ -1233,7 +1233,7 @@ class CamelCut_Stage:
                 for c in word:
                     if new_token and (
                         (c.isupper() and not new_token[-1].isupper()) or
-                        (c.isnumeric() and not new_token[-1].isnumeric())
+                        (c.isdigit() and not new_token[-1].isdigit())
                     ):
                         new_token += " "
                     new_token += c

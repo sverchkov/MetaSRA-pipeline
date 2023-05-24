@@ -40,7 +40,7 @@ def main():
         pickle.dump(bk_tree, f)
 
     print "Building the custom edit distance BK-Tree..."
-    bk_tree_2 = BKTree(string_metrics.CasePermissiveAlnumWeightedBagDistance(0.2,0.2), string_identifiers)
+    bk_tree_2 = BKTree(string_metrics.IntCasePermissiveAlnumWeightedBagDistance(0.2,0.2), string_identifiers)
 
     with open("fuzzy_match_bk_tree_2023.pickle", "w") as f:
         pickle.dump(bk_tree_2, f)

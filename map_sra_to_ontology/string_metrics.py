@@ -152,3 +152,13 @@ class CasePermissiveAlnumWeightedBagDistance(Callable):
     
     def _weight_fn(self, char):
         return 1 if char.isalnum() else self.non_alnum_weight
+
+class IntCasePermissiveAlnumWeightedBagDistance(CasePermissiveAlnumWeightedBagDistance):
+
+    __name__ = 'IntCasePermissiveAlnumWeightedBagDistance'
+
+    def __init__(self, non_alnum_weight, case_weight):
+        super(IntCasePermissiveAlnumWeightedBagDistance, self).__init__(non_alnum_weight, case_weight)
+    
+    def __call__(self, str_a, str_b):
+        return int(np.ceil(super(IntCasePermissiveAlnumWeightedBagDistance, self).__call__(str_a, str_b)))
