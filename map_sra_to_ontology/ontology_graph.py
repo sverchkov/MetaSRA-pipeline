@@ -457,11 +457,14 @@ def parse_entity(lines, restrict_to_idspaces):
         """
         synonyms = Set()
         for syn in raw_syns:
-            m = re.search('\".+\"', syn)
-            if m:
-                syn_type = syn.split('"')[2].strip().split()[0]
-                parsed_syn = m.group(0)[1:-1].strip()
-                synonyms.add(Synonym(parsed_syn, syn_type))
+            try:
+                m = re.search('\".+\"', syn)
+                if m:
+                    syn_type = syn.split('"')[2].strip().split()[0]
+                    parsed_syn = m.group(0)[1:-1].strip()
+                    synonyms.add(Synonym(parsed_syn, syn_type))
+            except:
+                print "Skipping value: {}".format(syn)
         return synonyms
 
     def extract_xrefs(raw_xrefs):

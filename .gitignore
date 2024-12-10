@@ -2,3 +2,6 @@
 nltk_data
 pip-packages
 map_sra_to_ontology/obo/*.obo
+
+# Python things
+*.pyc

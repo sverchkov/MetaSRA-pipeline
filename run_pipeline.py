@@ -19,10 +19,13 @@ import map_sra_to_ontology
 from map_sra_to_ontology import ontology_graph
 from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import config
-import predict_sample_type
-from predict_sample_type import run_sample_type_predictor
+from map_sra_to_ontology import predict_sample_type
+from map_sra_to_ontology import run_sample_type_predictor
+from map_sra_to_ontology.load_specialist_lex import SpecialistLexicon
 from predict_sample_type.learn_classifier import *
 from map_sra_to_ontology import pipeline_components as pc
+from map_sra_to_ontology.pipeline_components import *
+
 
 def main():
     parser = OptionParser()
