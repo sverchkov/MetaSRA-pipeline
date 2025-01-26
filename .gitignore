@@ -8,3 +8,6 @@ map_sra_to_ontology/fuzzy_matching_index
 
 # Python things
 *.pyc
+
+# Snakemake things
+create_metasra/.snakemake
