@@ -5,6 +5,7 @@
 
 import json
 import sys
+import traceback
 import  os
 from os.path import realpath
 from optparse import OptionParser
@@ -94,7 +95,7 @@ def run_pipeline(pipeline_func, sample_accs, sample_to_metadata):
             }
         except Exception as e:
             print "ERROR! An error occurred processing sample %s. %s" % (sample_acc, e)
-            print traceback.print_exc()
+            traceback.print_exc()
     return sample_acc_to_matches
 
 if __name__ == "__main__":
