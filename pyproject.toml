@@ -12,7 +12,6 @@ dependencies = [
     "setuptools"
 ]
 readme = "README.md"
-license-files = "LICENSE"
 
 [project.urls]
 Repository = "https://github.com/deweylab/MetaSRA-pipeline"
