@@ -1,0 +1,19 @@
+[build-system]
+requires ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metasra"
+dynamic = ["version"]
+dependencies = [
+    "numpy<1.20.0",
+    "scipy",
+    "scikit-learn<0.23.0",
+    "setuptools"
+]
+readme = "README.md"
+license = BSD-3-Clause"
+license-files = "LICENSE"
+
+[project.urls]
+Repository = "https://github.com/deweylab/MetaSRA-pipeline"
