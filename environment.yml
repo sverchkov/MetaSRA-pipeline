@@ -12,3 +12,6 @@ dependencies:
   - nltk
   - singledispatch
   - pybktree
+  - pip
+  - pip:
+    - "git+ssh://git@github.com/sverchkov/MetaSRA-pipeline@pkg"
