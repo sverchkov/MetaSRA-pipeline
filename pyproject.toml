@@ -12,7 +12,7 @@ dependencies = [
     "setuptools"
 ]
 readme = "README.md"
-license = BSD-3-Clause"
+license = "BSD-3-Clause"
 license-files = "LICENSE"
 
 [project.urls]
