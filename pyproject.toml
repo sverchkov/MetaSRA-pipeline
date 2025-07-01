@@ -13,5 +13,8 @@ dependencies = [
 ]
 readme = "README.md"
 
+[tool.setuptools.packages.find]
+include=["map_sra_to_ontology"]
+
 [project.urls]
 Repository = "https://github.com/deweylab/MetaSRA-pipeline"
