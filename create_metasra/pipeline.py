@@ -1,16 +1,19 @@
 from collections import defaultdict
-from map_sra_to_ontology import config
 from map_sra_to_ontology.pipeline_components import *
 
 INCLUDED_ONTOLOGIES = ["CL", "DOID", "UBERON"]
 
-def build_pipeline():
+def build_pipeline(lex_dir_path):
     """
+    Build term-matching pipeline.
+
+    Parameters: lex_dir_path: location of downloaded specialist lexicon dir
+
     Improvement: Added stage TermArtifactCombinations_Stage
 
     Pipeline Version 53
     """
-    spec_lex = SpecialistLexicon(config.specialist_lex_location())
+    spec_lex = SpecialistLexicon(lex_dir_path)
     inflec_var = SPECIALISTLexInflectionalVariants(spec_lex)
     spell_var = SPECIALISTSpellingVariants(spec_lex)
     key_val_filt = KeyValueFilter_Stage()

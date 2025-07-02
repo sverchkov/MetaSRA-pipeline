@@ -35,6 +35,11 @@ def main():
         help="JSON file mapping each sample to its raw key-value pairs"
     )
     parser.add_option(
+        "-l",
+        "--lex_dir",
+        help="Location of lexicon directory"
+    )
+    parser.add_option(
         "-o", 
         "--pipeline_results_file", 
         help="File to which to write the matches."
@@ -50,7 +55,7 @@ def main():
         sample_to_metadata = json.load(f)
 
     # If specified in options, run the pipeline
-    pipeline_func = pipeline.build_pipeline()
+    pipeline_func = pipeline.build_pipeline(options.lex_dir)
     sample_acc_to_matches = run_pipeline(
         pipeline_func, 
         sample_accs,
